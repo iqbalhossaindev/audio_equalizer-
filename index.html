@@ -1094,8 +1094,8 @@ function renderLoop() {
   }
 
   // === HUD stats ===
-  const db = avgLevel > 0.001 ? Math.round(20 * Math.log10(avgLevel)) : -∞;
-  document.getElementById('volVal').textContent = isFinite(db) ? db : '—';
+  const db = avgLevel > 0.001 ? Math.round(20 * Math.log10(avgLevel)) : null;
+  document.getElementById('volVal').textContent = (db !== null && isFinite(db)) ? db : '—';
 
   // Peak freq
   let maxIdx = 0;
@@ -1165,11 +1165,11 @@ function renderLoop() {
     eqCtx.beginPath();
     eqCtx.moveTo(x + radius, y);
     eqCtx.lineTo(x + effectiveW - radius, y);
-    eqCtx.quadraticCurveTo(x + effectiveW, y, x + effectiveW, y + radius);
+    eqCtx.arcTo(x + effectiveW, y, x + effectiveW, y + radius, radius);
     eqCtx.lineTo(x + effectiveW, baseY);
     eqCtx.lineTo(x, baseY);
-    eqCtx.lineTo(x, y + radius);
-    eqCtx.quadraticCurveTo(x, y, x + radius, y);
+    eqCtx.arcTo(x, y + radius, x, y, radius);
+    eqCtx.lineTo(x + radius, y);
     eqCtx.fillStyle = barGrad;
     eqCtx.fill();
 
@@ -1181,7 +1181,7 @@ function renderLoop() {
     if (peakHeights[i] > 0.02) {
       const py = baseY - peakHeights[i] * usableH;
       eqCtx.beginPath();
-      eqCtx.roundRect(x, py - 2, effectiveW, 3, 1.5);
+      eqCtx.rect(x, py - 2, effectiveW, 3);
       eqCtx.fillStyle = `hsla(${hue+30},100%,80%,${0.6 + barHeights[i] * 0.4})`;
       eqCtx.fill();
     }
